@@ -3,303 +3,480 @@
 #include<stdlib.h>
 // Deficnición de códigos de tokens
 #include <math.h>
-#include "lista.h"
-#include "traductor.h"
+#include "list.h"
+#include "translator.h"
 
 extern int yylineno;
 extern int yylex();
 int yyerror (const char *msg);
-lista t;
-int tipo;
+list t;
+int type;
 %}
 
 %union{
 	char *str;
-	struct listaCodigo * l;
+	struct codeList * l;
 }
 
-%expect 1
+%expect 2
 %token <str> ID
 %token <str> NUM
-%token <str> CADENA
-%token FUNC VAR LET IF ELSE WHILE PRINT READ PUNTOCOMA COMA SUMA MENOS IGUAL PARIZQUIERDO PARDERECHO LLAVEIZQUIERDA LLAVEDERECHA
-%right IGUAL					// EXPLICA LA SEMANA QUE VIENE
-%left SUMA MENOS
-%left ASTERISCO CONTRABARRA
-%left UMENOS
+%token <str> STRING
+%token OR AND DO FUNC VAR LET IF ELSE WHILE PRINT READ SEMICOLON COMA PLUS MINUS EQUAL LEFTPAREN RIGHTPAREN RCURLYBRACKET LCURLYBRACKET FOR
+%right EQUAL					// EXPLICA LA SEMANA QUE VIENE
+%left PLUS MINUS
+%left ASTERISC SLASH
+%left UMINUS
+%nonassoc IGIG GREATERTHAN LESSERTHAN GTOREQ LSSROREQ DIFFERENT
+%left OR AND
 
-%type <l> expresion read_list print_item print_list statement statement_list asig
+%type <l> expresion read_list print_item print_list statement statement_list asig declarations identifier_list boolean
 %%
-program : { t = crearLista(); } FUNC ID PARIZQUIERDO PARDERECHO LLAVEIZQUIERDA declarations statement_list LLAVEDERECHA {
-						imprimirVariables(t);
-						imprimirlistaCodigo($8);
-						liberarlistaCodigo($8);
+program : { t = createList(); } FUNC ID LEFTPAREN RIGHTPAREN LCURLYBRACKET declarations statement_list RCURLYBRACKET {
+						printVariables(t);
+						printCodeLists($7, $8);
+						freeCodeList($8);
 
 					}
-				| error PUNTOCOMA {printf("error en la asignacion en la linea %d\n", yylineno); }
+				| error SEMICOLON {printf("error en la asignacion en la linea %d\n", yylineno); }
 				;
-declarations 	: declarations VAR { tipo = 1; } identifier_list PUNTOCOMA { }
-							| declarations LET { tipo = 2; } identifier_list PUNTOCOMA {  }
-							| {}
+declarations 	: declarations VAR { type = 1; } identifier_list SEMICOLON {
+									$$ = new_CodeList();
+									linkCodeList($$, $1);
+									linkCodeList($$, $4);
+								}
+							| declarations LET { type = 2; } identifier_list SEMICOLON {
+								$$ = new_CodeList();
+								linkCodeList($$, $1);
+								linkCodeList($$, $4); }
+							| {$$ = new_CodeList();}
 							;
 identifier_list : asig {
-									//	if (consultarVariable(t, $1) > 0) printf("Existente\n");
-									//	else insertarVariable(&t, $1, tipo);
+									$$ = new_CodeList();
+									linkCodeList($$, $1);
+									//	if (checkVariable(t, $1) > 0) printf("Existente\n");
+									//	else insertVariable(&t, $1, type);
 									}
 								| identifier_list COMA asig {
-									//if (consultarVariable(t, $3) > 0) printf("%s Existente\n", $3);
-									//  else insertarVariable(t, $3, tipo);
+									$$ = new_CodeList();
+									linkCodeList($$, $1);
+									linkCodeList($$, $3);
+									// if (checkVariable(t, $3) > 0) printf("%s Existente\n", $3);
+								  // else insertVariable(t, $3, type);
 								}
 								;
 asig		: ID {
-						if(consultarVariable(t, $1) > 0)	printf("ID %s ya existente\n", $1);
+						if(checkVariable(t, $1) > 0)	printf("ID %s ya existente\n", $1);
 						else {
-							insertarVariable(&t, $1, tipo);
+
+							insertVariable(&t, $1, type);
+							$$ = new_CodeList();
+
 						}
 					}
-				| ID IGUAL expresion {
-							if(consultarVariable(t, $1) > 0) {
-								//printf("Variable %s ya declarada\n", $1);
+				| ID EQUAL expresion {
+							if(checkVariable(t, $1) == 0) {
+								insertVariable(&t, $1, type);
+								$$ = new_CodeList();
+								char* label = underScore($1);
+								Instruction c1 = new_instruction("sw ", $3->last->result, label, NULL);
+								linkCodeList($$, $3);
+								insertInstruction(c1, $$);
+								delete_register($3);
 							} else {
-								insertarVariable(&t, $1, tipo);
-								$$ = nueva_listaCodigo();
-								char* etiqueta = barra($1);
-								Cuadrupla c1 = nueva_cuadrupla("sw ", $3->ultima->destino, etiqueta, NULL);
-								enlazarlistaCodigos(&$$, $3);
-								insertarCuadrupla(c1, &$$);
-								eliminarRegistro($3);
+								printf("variable ya existente");
 							}
 					}
 
 statement_list	: statement_list statement {
-										$$ = nueva_listaCodigo();
-										enlazarlistaCodigos(&$$, $1);
-										enlazarlistaCodigos(&$$, $2);
+										$$ = new_CodeList();
+										linkCodeList($$, $1);
+										linkCodeList($$, $2);
 									}
-								| {$$ = nueva_listaCodigo();}
+								| {$$ = new_CodeList();}
 								;
-statement	: ID IGUAL expresion PUNTOCOMA {
-									if(consultarVariable(t, $1) > 0) {
-										//printf("Variable %s ya existente\n", $1);
-									} else {
-										insertarVariable(&t, $1, tipo);
-										$$ = nueva_listaCodigo();
-										char* etiqueta = barra($1);
-										Cuadrupla c1 = nueva_cuadrupla("sw ", $3->ultima->destino, etiqueta, NULL);
-										enlazarlistaCodigos(&$$, $3);
-										insertarCuadrupla(c1, &$$);
-										eliminarRegistro($3);
-									}
+
+statement	: 							ID EQUAL expresion SEMICOLON {
+														int n = checkVariable(t, $1);
+
+														  if(checkVariable(t, $1) > 0) {
+																	if(n == 1){
+																		insertVariable(&t, $1, type);
+																		$$ = new_CodeList();
+																		char* label = underScore($1);
+																		Instruction c1 = new_instruction("sw ", $3->last->result, label, NULL);
+																		linkCodeList($$, $3);
+																		insertInstruction(c1, $$);
+																		delete_register($3);
+																	} else {
+																			printf("Las constantes no pueden ser modificadas\n");
+																		}
+															}
+														}
+														| IF LEFTPAREN boolean RIGHTPAREN statement ELSE statement{
+															Instruction c1 = new_instruction(create_label(), NULL, NULL, NULL);
+															Instruction c2 = new_instruction(create_label(), NULL, NULL, NULL);
+															Instruction c3 = new_instruction("beqz ", NULL, $3->first->result, c1->op);
+															Instruction c4 = new_instruction("b ", NULL, c2->op, NULL);
+															$$ = new_CodeList();							// creamos la lista de codigo
+															linkCodeList($$, $3);					// enlazamos con la expresion
+															insertInstruction(c3, $$);						// insertamos la Instruction de beqz en $$
+															linkCodeList($$, $5);					// enlazamos  $$ con el primer STATEMENT
+															insertInstruction(c4, $$);						// insertamos el branch en $$
+															insertInstruction(c1, $$);						// insertamos la Instruction 1 en $$
+															linkCodeList($$, $7);					// enlazamos
+															insertInstruction(c2, $$);						// insertamos
+															delete_register($3);
+
+														}
+														| IF LEFTPAREN boolean RIGHTPAREN statement{
+															$$ = new_CodeList();
+															char *label = create_label();
+															Instruction c1 = new_instruction(label, NULL, NULL, NULL);
+															Instruction c2 = new_instruction("beqz ", NULL, $3->first->result, c1->op);
+															linkCodeList($$, $3);						// expresion
+															insertInstruction(c2, $$);							// BEQZ
+															linkCodeList($$, $5);						// statement
+															insertInstruction(c1, $$);							// label
+															delete_register($3);
+														}
+														| LCURLYBRACKET statement_list RCURLYBRACKET {
+															$$ = new_CodeList();
+															linkCodeList($$, $2);
+														}
+
+														| WHILE LEFTPAREN boolean	RIGHTPAREN statement {
+																Instruction c1 = new_instruction(create_label(), NULL, NULL, NULL);
+														 		Instruction c2 = new_instruction(create_label(), NULL, NULL, NULL);
+														 		Instruction c3 = new_instruction("beqz ",  NULL, $3->first->result, c2->op);
+														 		Instruction c4 = new_instruction("b ", NULL, c1->op, NULL);
+
+														 		$$ = new_CodeList();
+														 		insertInstruction(c1, $$);							// label
+														 		linkCodeList($$, $3);						// expresion
+														 		insertInstruction(c3, $$);							// BEQZ
+														 		linkCodeList($$, $5);						// statement
+														 		insertInstruction(c4, $$);							// B
+														 		insertInstruction(c2, $$);							// label
+														 		delete_register($3);										//
+															}
+														 | DO statement WHILE boolean SEMICOLON {
+															 Instruction c1 = new_instruction(create_label(),NULL,NULL,NULL);
+															 Instruction c2 = new_instruction("bnez", $4->first->result, c1->op, NULL);
+															 $$ = new_CodeList();
+															 insertInstruction(c1, $$);			   //label
+															 linkCodeList($$, $2);						//statement
+															 linkCodeList($$, $4);						//expresion
+															 insertInstruction(c2, $$);			    //bnez
+															 delete_register($4);							//eliminar exp
+														 }
+
+
+
+					| FOR LEFTPAREN ID EQUAL expresion SEMICOLON boolean SEMICOLON  ID EQUAL expresion RIGHTPAREN LCURLYBRACKET statement_list RCURLYBRACKET {
+
+										Instruction Label1 = new_instruction(create_label(), NULL, NULL, NULL);
+										Instruction Label2 = new_instruction(create_label(), NULL, NULL, NULL);
+
+										Instruction sw1 = new_instruction("sw", $5->last->result, underScore($3), NULL);
+										Instruction sb = new_instruction("sb",$11->last->result, underScore($9), NULL);
+										Instruction beq = new_instruction("bnez",NULL,  $7->first->result, Label2->op);
+										Instruction sw2 = new_instruction("sw", $11->last->result, underScore($9), NULL);
+										Instruction b = new_instruction("b",NULL , NULL, Label1->op);
+
+										$$ = new_CodeList();
+
+										linkCodeList($$,$5);
+										insertInstruction(sw1, $$);
+										linkCodeList($$,$7);
+										insertInstruction(Label1, $$);
+										insertInstruction(sb, $$);
+										insertInstruction(beq, $$);
+										linkCodeList($$, $14);
+										linkCodeList($$, $11);
+										insertInstruction(sw2, $$);
+										insertInstruction(b, $$);
+										insertInstruction(Label2, $$);
+										delete_register($5);
+										delete_register($7);
+										delete_register($11);
+
 						}
-					| LLAVEIZQUIERDA statement_list LLAVEDERECHA {
-						$$ = nueva_listaCodigo();
-						enlazarlistaCodigos(&$$, $2);
-					}
-					| IF PARIZQUIERDO expresion PARDERECHO statement ELSE statement {
-								Cuadrupla c1 = nueva_cuadrupla(crear_etiqueta(), NULL, NULL, NULL);
-								Cuadrupla c2 = nueva_cuadrupla(crear_etiqueta(), NULL, NULL, NULL);
-								Cuadrupla c3 = nueva_cuadrupla("beqz ", NULL, $3->primera->destino, c1->op);
-								Cuadrupla c4 = nueva_cuadrupla("b ", c2->op, NULL, NULL);
-								$$ = nueva_listaCodigo();							// creamos la lista de codigo
-								enlazarlistaCodigos(&$$, $3);					// enlazamos con la sentencia beqz
-								insertarCuadrupla(c3, &$$);						// insertamos la cuadrupla en $$
-								enlazarlistaCodigos(&$$, $5);					// enlazamos  $$ con STATEMENT
-								insertarCuadrupla(c4, &$$);						// insertamos el branch en $$
-								insertarCuadrupla(c1, &$$);						// insertamos la cuadrupla 1 en $$
-								enlazarlistaCodigos(&$$, $7);					// enlazamos
-								insertarCuadrupla(c2, &$$);						// insertamos
-								eliminarRegistro($3);									// eliminamos registro
+
+						| PRINT print_list SEMICOLON {
+							$$ = new_CodeList();
+							linkCodeList($$, $2);
 						}
 
 
-					| IF PARIZQUIERDO expresion PARDERECHO statement {
-							char *etiqueta = crear_etiqueta();
-
-							Cuadrupla c1 = nueva_cuadrupla(etiqueta, NULL, NULL, NULL);
-							Cuadrupla c2 = nueva_cuadrupla("beqz ", NULL, $3->primera->destino, c1->op);
-							$$ = nueva_listaCodigo();
-							enlazarlistaCodigos(&$$, $3);						// expresion
-							insertarCuadrupla(c2, &$$);							// BEQZ
-							enlazarlistaCodigos(&$$, $5);						// statement
-							insertarCuadrupla(c1, &$$);							// ETIQUETA
-							eliminarRegistro($3);
-					  }
-
-
-					| WHILE PARIZQUIERDO expresion	PARDERECHO statement {
-
-						Cuadrupla c1 = nueva_cuadrupla(crear_etiqueta(), NULL, NULL, NULL);
-				 		Cuadrupla c2 = nueva_cuadrupla(crear_etiqueta(), NULL, NULL, NULL);
-				 		Cuadrupla c3 = nueva_cuadrupla("beqz ",  NULL, $3->primera->destino, c2->op);
-				 		Cuadrupla c4 = nueva_cuadrupla("b ", NULL, c1->op, NULL);
-				 		$$ = nueva_listaCodigo();
-				 		insertarCuadrupla(c1, &$$);				// ETIQUETA
-				 		enlazarlistaCodigos(&$$, $3);						// expresion
-				 		insertarCuadrupla(c3, &$$);				// BEQZ
-				 		enlazarlistaCodigos(&$$, $5);						// statement
-				 		insertarCuadrupla(c4, &$$);				// B
-				 		insertarCuadrupla(c2, &$$);				// ETIQUETA
-				 		eliminarRegistro($3);							//
-
+					| READ read_list SEMICOLON {
+						$$ = new_CodeList();
+						linkCodeList($$, $2);
 						}
 
-					| PRINT print_list PUNTOCOMA {
-						$$ = nueva_listaCodigo();
-						enlazarlistaCodigos(&$$, $2);
-					}
 
 
-					| READ read_list PUNTOCOMA {
-						$$ = nueva_listaCodigo();
-						enlazarlistaCodigos(&$$, $2);
-						}
 					;
 
 print_list	: print_item {
-							$$ = nueva_listaCodigo();
-							enlazarlistaCodigos(&$$, $1);
+							$$ = new_CodeList();
+							linkCodeList($$, $1);
 						}
 						| print_list COMA print_item {
-							$$ = nueva_listaCodigo();
-							enlazarlistaCodigos(&$$, $1);
-							enlazarlistaCodigos(&$$, $3);
+							$$ = new_CodeList();
+							linkCodeList($$, $1);
+							linkCodeList($$, $3);
 						}
 						;
 
 print_item	: expresion {
-								$$ = nueva_listaCodigo();
-								Cuadrupla c1 = nueva_cuadrupla("move ", "$a0 ", $1->primera->destino, NULL);
-								Cuadrupla c2 = nueva_cuadrupla("li ", "$v0 ", "1", NULL);
-								Cuadrupla c3 = nueva_cuadrupla("syscall", NULL, NULL, NULL);
-								enlazarlistaCodigos(&$$, $1);
-								insertarCuadrupla(c1, &$$);
-								insertarCuadrupla(c2, &$$);
-								insertarCuadrupla(c3, &$$);
-								eliminarRegistro($1);
-
+								$$ = new_CodeList();
+								Instruction c1 = new_instruction("move ", "$a0 ", $1->first->result, NULL);
+								Instruction c2 = new_instruction("li ", "$v0 ", "1", NULL);
+								Instruction c3 = new_instruction("syscall", NULL, NULL, NULL);
+								linkCodeList($$, $1);
+								insertInstruction(c1, $$);
+								insertInstruction(c2, $$);
+								insertInstruction(c3, $$);
+								delete_register($1);
 							}
-						| CADENA {
-							insertarVariable(&t, $1, 1);
-							char *etiqueta = getLabel(t, $1);
-							Cuadrupla c1 = nueva_cuadrupla("la ", "$a0 ", etiqueta, NULL);
-							Cuadrupla c2 = nueva_cuadrupla("li ", "$v0 ", "4", NULL);
-							Cuadrupla c3 = nueva_cuadrupla("syscall", NULL, NULL, NULL);
-							$$ = nueva_listaCodigo();
-							insertarCuadrupla(c1, &$$);		// la $a0, _expresion
-							insertarCuadrupla(c2, &$$);		// li $v0, 4
-							insertarCuadrupla(c3, &$$);		// syscall;
+
+
+						| STRING {
+
+								if(checkVariable(t, $1) == 0) {
+												insertVariable(&t, $1, 3);
+								}
+								char *label = getLabel(t, $1);
+								Instruction c1 = new_instruction("la ", "$a0 ", label, NULL);
+								Instruction c2 = new_instruction("li ", "$v0 ", "4", NULL);
+								Instruction c3 = new_instruction("syscall", NULL, NULL, NULL);
+								$$ = new_CodeList();
+								insertInstruction(c1, $$);		// la $a0, _expresion
+								insertInstruction(c2, $$);		// li $v0, 4
+								insertInstruction(c3, $$);		// syscall;
 							}
 						;
 
 read_list	: ID	{
-								if(consultarVariable(t, $1) == 0) {
+								int n = checkVariable(t, $1);
+								if(n == 0) {
 									printf("variable no encontrada\n");
 								} else {
-									char* label = barra($1);
-									Cuadrupla c1 = nueva_cuadrupla("li ", "$v0 ", "5", NULL);
-									Cuadrupla c2 = nueva_cuadrupla("syscall", NULL, NULL, NULL);
-									Cuadrupla c3 = nueva_cuadrupla("sw ", "$v0 ", label, NULL);
-									$$ = nueva_listaCodigo();
-									insertarCuadrupla(c1, &$$);
-									insertarCuadrupla(c2, &$$);
-									insertarCuadrupla(c3, &$$);
+									if (n == 1) {
+											char* label = underScore($1);
+											Instruction c1 = new_instruction("li ", "$v0 ", "5", NULL);
+											Instruction c2 = new_instruction("syscall", NULL, NULL, NULL);
+											Instruction c3 = new_instruction("sw ", "$v0 ", label, NULL);
+											$$ = new_CodeList();
+											insertInstruction(c1, $$);
+											insertInstruction(c2, $$);
+											insertInstruction(c3, $$);
+									} else {
+										printf("las constantes no pueden ser identificadores\n");
+									}
 								}
 
 						}
 					| read_list COMA ID {
-							if (consultarVariable(t, $3) == 0){
+							if (checkVariable(t, $3) == 0){
 								printf("variable no encontrada\n");
 							} else {
-								$$ = nueva_listaCodigo();
-								Cuadrupla c1 = nueva_cuadrupla("li ", "$v0 ", "5", NULL);
-								Cuadrupla c2 = nueva_cuadrupla("syscall", NULL, NULL, NULL);
-								Cuadrupla c3 = nueva_cuadrupla("sw ", "$v0 ", $3, NULL);
-								enlazarlistaCodigos(&$$, $1);
-								insertarCuadrupla(c1, &$$);
-								insertarCuadrupla(c2, &$$);
-								insertarCuadrupla(c3, &$$);
+								$$ = new_CodeList();
+								Instruction c1 = new_instruction("li ", "$v0 ", "5", NULL);
+								Instruction c2 = new_instruction("syscall", NULL, NULL, NULL);
+								Instruction c3 = new_instruction("sw ", "$v0 ", $3, NULL);
+								linkCodeList($$, $1);
+								insertInstruction(c1, $$);
+								insertInstruction(c2, $$);
+								insertInstruction(c3, $$);
 							}
 						}
 					;
 
 
-expresion	: expresion SUMA expresion {
-						char* reg = registro_actual();
-						Cuadrupla c = nueva_cuadrupla("add ",reg,  $1->ultima->destino, $3->ultima->destino);
-						$$ = nueva_listaCodigo();
-						enlazarlistaCodigos(&$$, $1);
-						enlazarlistaCodigos(&$$, $3);
-						insertarCuadrupla(c, &$$);
-						eliminarRegistro($1);
-						eliminarRegistro($3);
+
+boolean:		 expresion GTOREQ expresion {
+													$$ = new_CodeList();
+													char* registro = current_register();
+													linkCodeList($$, $1);
+													linkCodeList($$, $3);
+													Instruction c1 = new_instruction("sge", registro, $1->last->result, $3->last->result);
+													insertInstruction(c1, $$);
+													delete_register($1);
+													delete_register($3);
+								}
+						| expresion LSSROREQ expresion {
+													$$ = new_CodeList();
+													char* registro = current_register();
+													linkCodeList($$, $1);
+													linkCodeList($$, $3);
+													Instruction c1 = new_instruction("sle", registro,$1->last->result, $3->last->result);
+													insertInstruction(c1, $$);
+													delete_register($1);
+													delete_register($3);
+												}
+						| expresion GREATERTHAN expresion {
+													$$ = new_CodeList();
+													char* registro = current_register();
+													linkCodeList($$, $1);
+													linkCodeList($$, $3);
+													Instruction c1 = new_instruction("sgt", registro, $1->last->result, $3->last->result);
+													insertInstruction(c1, $$);
+													delete_register($1);
+													delete_register($3);
+							}
+						| expresion LESSERTHAN expresion {
+													$$ = new_CodeList();
+													char* registro = current_register();
+													linkCodeList($$, $1);
+													linkCodeList($$, $3);
+													Instruction c1 = new_instruction("slt", registro, $1->last->result, $3->last->result);
+													insertInstruction(c1, $$);
+													delete_register($1);
+													delete_register($3);
+							}
+						| expresion IGIG expresion {
+												$$ = new_CodeList();
+												char* registro = current_register();
+												linkCodeList($$, $1);
+												linkCodeList($$, $3);
+												Instruction c1 = new_instruction("seq", registro, $1->last->result, $3->last->result);
+												delete_register($1);
+												delete_register($3);
+
+							}
+
+						| expresion DIFFERENT expresion {
+													$$ = new_CodeList();
+													char* registro = current_register();
+													linkCodeList($$, $1);
+													linkCodeList($$, $3);
+													Instruction c1 = new_instruction("sne", registro, $1->last->result, $3->last->result);
+													insertInstruction(c1, $$);
+													delete_register($1);
+													delete_register($3);
+												}
+
+
+						| boolean AND boolean {
+							$$ = new_CodeList();
+							char* registro = current_register();
+							linkCodeList($$, $1);
+							linkCodeList($$, $3);
+							Instruction c1 = new_instruction("and", registro, $1->last->result, $3->last->result);
+							insertInstruction(c1, $$);
+							delete_register($1);
+							delete_register($3);
+							}
+						| boolean OR boolean {
+											$$ = new_CodeList();
+											char* registro = current_register();
+											linkCodeList($$, $1);
+											linkCodeList($$, $3);
+											Instruction c1 = new_instruction("or", registro, $1->last->result, $3->last->result);
+											insertInstruction(c1, $$);
+											delete_register($1);
+											delete_register($3);
+										}
+						 | LEFTPAREN boolean RIGHTPAREN {
+							$$ = new_CodeList();
+							linkCodeList($$, $2);
+							$$->first->result = $2->first->result;
+							$$->last->result = $2->last->result;
+
+							}
+
+							| expresion {
+								$$ = new_CodeList();
+								linkCodeList($$, $1);
+							}
+							;
+
+
+
+expresion	: expresion PLUS expresion {
+						char* reg = current_register();
+						Instruction c = new_instruction("add ",reg,  $1->last->result, $3->last->result);
+						$$ = new_CodeList();
+						linkCodeList($$, $1);
+						linkCodeList($$, $3);
+						insertInstruction(c, $$);
+						delete_register($1);
+						delete_register($3);
 
 					 }
-					| expresion MENOS expresion {
-							char* reg = registro_actual();
-							Cuadrupla c = nueva_cuadrupla("sub ", reg,  $1->ultima->destino, $3->ultima->destino);
-							$$ = nueva_listaCodigo();
-							enlazarlistaCodigos(&$$, $1);
-							enlazarlistaCodigos(&$$, $3);
-							insertarCuadrupla(c, &$$);
-							eliminarRegistro($1);
-							eliminarRegistro($3);
+					| expresion MINUS expresion {
+							char* reg = current_register();
+							Instruction c = new_instruction("sub ", reg,  $1->last->result, $3->last->result);
+							$$ = new_CodeList();
+							linkCodeList($$, $1);
+							linkCodeList($$, $3);
+							insertInstruction(c, $$);
+							delete_register($1);
+							delete_register($3);
 						}
 
-					| expresion ASTERISCO expresion {
-							char* reg = registro_actual();
-							Cuadrupla c = nueva_cuadrupla("mul ",reg , $1->ultima->destino, $3->ultima->destino);
-							$$ = nueva_listaCodigo();
-							enlazarlistaCodigos(&$$, $1);
-							enlazarlistaCodigos(&$$, $3);
+					| expresion ASTERISC expresion {
+							char* reg = current_register();
+							Instruction c = new_instruction("mul ",reg , $1->last->result, $3->last->result);
+							$$ = new_CodeList();
+							linkCodeList($$, $1);
+							linkCodeList($$, $3);
 
-							insertarCuadrupla(c, &$$);
-							eliminarRegistro($1);
-							eliminarRegistro($3);
+							insertInstruction(c, $$);
+							delete_register($1);
+							delete_register($3);
 						}
-					| expresion CONTRABARRA expresion {
-						 char* reg = registro_actual();
-						 Cuadrupla c = nueva_cuadrupla("div ", reg, $1->ultima->destino, $3->ultima->destino);
-						 $$ = nueva_listaCodigo();
-						 enlazarlistaCodigos(&$$, $1);
-						 enlazarlistaCodigos(&$$, $3);
+					| expresion SLASH expresion {
+						 char* reg = current_register();
+						 Instruction c = new_instruction("div ", reg, $1->last->result, $3->last->result);
+						 $$ = new_CodeList();
+						 linkCodeList($$, $1);
+						 linkCodeList($$, $3);
 
-						 insertarCuadrupla(c, &$$);
-						 eliminarRegistro($1);
-						 eliminarRegistro($3);
+						 insertInstruction(c, $$);
+						 delete_register($1);
+						 delete_register($3);
 
 						}
-					| MENOS expresion %prec UMENOS {
-						 char* reg = registro_actual();
-						 Cuadrupla c = nueva_cuadrupla("neg ", reg, $2->ultima->destino, NULL);
-						 enlazarlistaCodigos(&$$, $2);
-						 insertarCuadrupla(c, &$$);
+					| MINUS expresion %prec UMINUS {
+						 char* reg = current_register();
+						 Instruction c = new_instruction("neg ", reg, $2->last->result, NULL);
+						 linkCodeList($$, $2);
+						 insertInstruction(c, $$);
 						}
-					| PARIZQUIERDO expresion PARDERECHO {
-								$$ = nueva_listaCodigo();
-								enlazarlistaCodigos(&$$, $2);
-								$$->primera->destino = $2->primera->destino;
-								$$->ultima->destino = $2->ultima->destino;
+					| LEFTPAREN expresion RIGHTPAREN {
+								$$ = new_CodeList();
+								linkCodeList($$, $2);
+								$$->first->result = $2->first->result;
+								$$->last->result = $2->last->result;
 						}
+
+
+
 					| ID {
-						if (consultarVariable(t, $1) == 0) {
+						if (checkVariable(t, $1) == 0) {
 											printf("ID %s no declarado\n",$1);
 							} else {
-									char *reg = registro_actual();
-									$$ = nueva_listaCodigo();
-									Cuadrupla c = nueva_cuadrupla("lw ", reg, barra($1), NULL);
-									insertarCuadrupla(c, &$$);
+									char *reg = current_register();
+									$$ = new_CodeList();
+									Instruction c = new_instruction("lw ", reg, underScore($1), NULL);
+									insertInstruction(c, $$);
 							}
-						}
-
-
-
-					| NUM { $$ = nueva_listaCodigo();															// Creamos una nuevo codigo de ensamblador
-									char * reg = registro_actual();												// Creamos un registro actual, el primero que este libre
-									Cuadrupla c = nueva_cuadrupla("li ", reg, $1, NULL);		// Creamos una cuadrupla de la sentencia de carga inmediata
-									insertarCuadrupla(c, &$$);															// Insertamos la cuadrupla en el codigo
 
 						}
+
+					| NUM { $$ = new_CodeList();															  // Creamos una nuevo codigo de ensamblador
+									char * reg = current_register();												  // Creamos un registro actual, el primero que este libre
+									Instruction c = new_instruction("li ", reg, $1, NULL);		// Creamos una Instruction de la sentencia de carga inmediata
+									insertInstruction(c, $$);																// Insertamos la Instruction en el codigo
+									//imprimirlistaCodigo($$);
+						}
+
 					;
+
+
 
 %%
 

@@ -1,0 +1,564 @@
+Starting parse
+Entering state 0
+Reading a token: Next token is token FUNC ()
+Reducing stack by rule 1 (line 33):
+-> $$ = nterm @1 ()
+Stack now 0
+Entering state 3
+Next token is token FUNC ()
+Shifting token FUNC ()
+Entering state 6
+Reading a token: Next token is token ID ()
+Shifting token ID ()
+Entering state 7
+Reading a token: Next token is token PARIZQUIERDO ()
+Shifting token PARIZQUIERDO ()
+Entering state 8
+Reading a token: Next token is token PARDERECHO ()
+Shifting token PARDERECHO ()
+Entering state 9
+Reading a token: Next token is token LLAVEIZQUIERDA ()
+Shifting token LLAVEIZQUIERDA ()
+Entering state 10
+Reducing stack by rule 8 (line 43):
+-> $$ = nterm declarations ()
+Stack now 0 3 6 7 8 9 10
+Entering state 11
+Reading a token: Next token is token LET ()
+Shifting token LET ()
+Entering state 13
+Reducing stack by rule 6 (line 42):
+-> $$ = nterm @3 ()
+Stack now 0 3 6 7 8 9 10 11 13
+Entering state 16
+Reading a token: Next token is token ID ()
+Shifting token ID ()
+Entering state 25
+Reading a token: Next token is token IGUAL ()
+Shifting token IGUAL ()
+Entering state 43
+Reading a token: Next token is token NUM ()
+Shifting token NUM ()
+Entering state 33
+Reducing stack by rule 35 (line 296):
+   $1 = token NUM ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 13 16 25 43
+Entering state 61
+Reading a token: Next token is token COMA ()
+Reducing stack by rule 12 (line 60):
+   $1 = token ID ()
+   $2 = token IGUAL ()
+   $3 = nterm expresion ()
+-> $$ = nterm asig ()
+Stack now 0 3 6 7 8 9 10 11 13 16
+Entering state 27
+Reducing stack by rule 9 (line 45):
+   $1 = nterm asig ()
+-> $$ = nterm identifier_list ()
+Stack now 0 3 6 7 8 9 10 11 13 16
+Entering state 28
+Next token is token COMA ()
+Shifting token COMA ()
+Entering state 45
+Reading a token: Next token is token ID ()
+Shifting token ID ()
+Entering state 25
+Reading a token: Next token is token IGUAL ()
+Shifting token IGUAL ()
+Entering state 43
+Reading a token: Next token is token NUM ()
+Shifting token NUM ()
+Entering state 33
+Reducing stack by rule 35 (line 296):
+   $1 = token NUM ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 13 16 28 45 25 43
+Entering state 61
+Reading a token: Next token is token PUNTOCOMA ()
+Reducing stack by rule 12 (line 60):
+   $1 = token ID ()
+   $2 = token IGUAL ()
+   $3 = nterm expresion ()
+-> $$ = nterm asig ()
+Stack now 0 3 6 7 8 9 10 11 13 16 28 45
+Entering state 62
+Reducing stack by rule 10 (line 49):
+   $1 = nterm identifier_list ()
+   $2 = token COMA ()
+   $3 = nterm asig ()
+-> $$ = nterm identifier_list ()
+Stack now 0 3 6 7 8 9 10 11 13 16
+Entering state 28
+Next token is token PUNTOCOMA ()
+Shifting token PUNTOCOMA ()
+Entering state 46
+Reducing stack by rule 7 (line 42):
+   $1 = nterm declarations ()
+   $2 = token LET ()
+   $3 = nterm @3 ()
+   $4 = nterm identifier_list ()
+   $5 = token PUNTOCOMA ()
+-> $$ = nterm declarations ()
+Stack now 0 3 6 7 8 9 10
+Entering state 11
+Reading a token: Next token is token VAR ()
+Shifting token VAR ()
+Entering state 12
+Reducing stack by rule 4 (line 41):
+-> $$ = nterm @2 ()
+Stack now 0 3 6 7 8 9 10 11 12
+Entering state 15
+Reading a token: Next token is token ID ()
+Shifting token ID ()
+Entering state 25
+Reading a token: Next token is token IGUAL ()
+Shifting token IGUAL ()
+Entering state 43
+Reading a token: Next token is token NUM ()
+Shifting token NUM ()
+Entering state 33
+Reducing stack by rule 35 (line 296):
+   $1 = token NUM ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 12 15 25 43
+Entering state 61
+Reading a token: Next token is token SUMA ()
+Shifting token SUMA ()
+Entering state 54
+Reading a token: Next token is token NUM ()
+Shifting token NUM ()
+Entering state 33
+Reducing stack by rule 35 (line 296):
+   $1 = token NUM ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 12 15 25 43 61 54
+Entering state 68
+Reading a token: Next token is token MENOS ()
+Reducing stack by rule 28 (line 226):
+   $1 = nterm expresion ()
+   $2 = token SUMA ()
+   $3 = nterm expresion ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 12 15 25 43
+Entering state 61
+Next token is token MENOS ()
+Shifting token MENOS ()
+Entering state 55
+Reading a token: Next token is token NUM ()
+Shifting token NUM ()
+Entering state 33
+Reducing stack by rule 35 (line 296):
+   $1 = token NUM ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 12 15 25 43 61 55
+Entering state 69
+Reading a token: Next token is token PUNTOCOMA ()
+Reducing stack by rule 29 (line 237):
+   $1 = nterm expresion ()
+   $2 = token MENOS ()
+   $3 = nterm expresion ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 12 15 25 43
+Entering state 61
+Next token is token PUNTOCOMA ()
+Reducing stack by rule 12 (line 60):
+   $1 = token ID ()
+   $2 = token IGUAL ()
+   $3 = nterm expresion ()
+-> $$ = nterm asig ()
+Stack now 0 3 6 7 8 9 10 11 12 15
+Entering state 27
+Reducing stack by rule 9 (line 45):
+   $1 = nterm asig ()
+-> $$ = nterm identifier_list ()
+Stack now 0 3 6 7 8 9 10 11 12 15
+Entering state 26
+Next token is token PUNTOCOMA ()
+Shifting token PUNTOCOMA ()
+Entering state 44
+Reducing stack by rule 5 (line 41):
+   $1 = nterm declarations ()
+   $2 = token VAR ()
+   $3 = nterm @2 ()
+   $4 = nterm identifier_list ()
+   $5 = token PUNTOCOMA ()
+-> $$ = nterm declarations ()
+Stack now 0 3 6 7 8 9 10
+Entering state 11
+Reading a token: Next token is token PRINT ()
+Reducing stack by rule 14 (line 79):
+-> $$ = nterm statement_list ()
+Stack now 0 3 6 7 8 9 10 11
+Entering state 14
+Next token is token PRINT ()
+Shifting token PRINT ()
+Entering state 20
+Reading a token: Next token is token CADENA ()
+Shifting token CADENA ()
+Entering state 34
+Reducing stack by rule 25 (line 181):
+   $1 = token CADENA ()
+-> $$ = nterm print_item ()
+Stack now 0 3 6 7 8 9 10 11 14 20
+Entering state 38
+Reducing stack by rule 22 (line 158):
+   $1 = nterm print_item ()
+-> $$ = nterm print_list ()
+Stack now 0 3 6 7 8 9 10 11 14 20
+Entering state 37
+Reading a token: Next token is token PUNTOCOMA ()
+Shifting token PUNTOCOMA ()
+Entering state 52
+Reducing stack by rule 20 (line 146):
+   $1 = token PRINT ()
+   $2 = nterm print_list ()
+   $3 = token PUNTOCOMA ()
+-> $$ = nterm statement ()
+Stack now 0 3 6 7 8 9 10 11 14
+Entering state 24
+Reducing stack by rule 13 (line 74):
+   $1 = nterm statement_list ()
+   $2 = nterm statement ()
+-> $$ = nterm statement_list ()
+Stack now 0 3 6 7 8 9 10 11
+Entering state 14
+Reading a token: Next token is token IF ()
+Shifting token IF ()
+Entering state 18
+Reading a token: Next token is token PARIZQUIERDO ()
+Shifting token PARIZQUIERDO ()
+Entering state 30
+Reading a token: Next token is token ID ()
+Shifting token ID ()
+Entering state 32
+Reducing stack by rule 34 (line 283):
+   $1 = token ID ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30
+Entering state 48
+Reading a token: Next token is token PARDERECHO ()
+Shifting token PARDERECHO ()
+Entering state 64
+Reading a token: Next token is token PRINT ()
+Shifting token PRINT ()
+Entering state 20
+Reading a token: Next token is token CADENA ()
+Shifting token CADENA ()
+Entering state 34
+Reducing stack by rule 25 (line 181):
+   $1 = token CADENA ()
+-> $$ = nterm print_item ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 20
+Entering state 38
+Reducing stack by rule 22 (line 158):
+   $1 = nterm print_item ()
+-> $$ = nterm print_list ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 20
+Entering state 37
+Reading a token: Next token is token PUNTOCOMA ()
+Shifting token PUNTOCOMA ()
+Entering state 52
+Reducing stack by rule 20 (line 146):
+   $1 = token PRINT ()
+   $2 = nterm print_list ()
+   $3 = token PUNTOCOMA ()
+-> $$ = nterm statement ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64
+Entering state 73
+Reading a token: Next token is token ELSE ()
+Shifting token ELSE ()
+Entering state 75
+Reading a token: Next token is token IF ()
+Shifting token IF ()
+Entering state 18
+Reading a token: Next token is token PARIZQUIERDO ()
+Shifting token PARIZQUIERDO ()
+Entering state 30
+Reading a token: Next token is token ID ()
+Shifting token ID ()
+Entering state 32
+Reducing stack by rule 34 (line 283):
+   $1 = token ID ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30
+Entering state 48
+Reading a token: Next token is token PARDERECHO ()
+Shifting token PARDERECHO ()
+Entering state 64
+Reading a token: Next token is token PRINT ()
+Shifting token PRINT ()
+Entering state 20
+Reading a token: Next token is token CADENA ()
+Shifting token CADENA ()
+Entering state 34
+Reducing stack by rule 25 (line 181):
+   $1 = token CADENA ()
+-> $$ = nterm print_item ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 20
+Entering state 38
+Reducing stack by rule 22 (line 158):
+   $1 = nterm print_item ()
+-> $$ = nterm print_list ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 20
+Entering state 37
+Reading a token: Next token is token PUNTOCOMA ()
+Shifting token PUNTOCOMA ()
+Entering state 52
+Reducing stack by rule 20 (line 146):
+   $1 = token PRINT ()
+   $2 = nterm print_list ()
+   $3 = token PUNTOCOMA ()
+-> $$ = nterm statement ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64
+Entering state 73
+Reading a token: Next token is token ELSE ()
+Shifting token ELSE ()
+Entering state 75
+Reading a token: Next token is token WHILE ()
+Shifting token WHILE ()
+Entering state 19
+Reading a token: Next token is token PARIZQUIERDO ()
+Shifting token PARIZQUIERDO ()
+Entering state 31
+Reading a token: Next token is token ID ()
+Shifting token ID ()
+Entering state 32
+Reducing stack by rule 34 (line 283):
+   $1 = token ID ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31
+Entering state 49
+Reading a token: Next token is token PARDERECHO ()
+Shifting token PARDERECHO ()
+Entering state 65
+Reading a token: Next token is token LLAVEIZQUIERDA ()
+Shifting token LLAVEIZQUIERDA ()
+Entering state 22
+Reducing stack by rule 14 (line 79):
+-> $$ = nterm statement_list ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65 22
+Entering state 42
+Reading a token: Next token is token PRINT ()
+Shifting token PRINT ()
+Entering state 20
+Reading a token: Next token is token CADENA ()
+Shifting token CADENA ()
+Entering state 34
+Reducing stack by rule 25 (line 181):
+   $1 = token CADENA ()
+-> $$ = nterm print_item ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65 22 42 20
+Entering state 38
+Reducing stack by rule 22 (line 158):
+   $1 = nterm print_item ()
+-> $$ = nterm print_list ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65 22 42 20
+Entering state 37
+Reading a token: Next token is token COMA ()
+Shifting token COMA ()
+Entering state 53
+Reading a token: Next token is token ID ()
+Shifting token ID ()
+Entering state 32
+Reducing stack by rule 34 (line 283):
+   $1 = token ID ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65 22 42 20 37 53
+Entering state 39
+Reading a token: Next token is token PUNTOCOMA ()
+Reducing stack by rule 24 (line 169):
+   $1 = nterm expresion ()
+-> $$ = nterm print_item ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65 22 42 20 37 53
+Entering state 67
+Reducing stack by rule 23 (line 162):
+   $1 = nterm print_list ()
+   $2 = token COMA ()
+   $3 = nterm print_item ()
+-> $$ = nterm print_list ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65 22 42 20
+Entering state 37
+Next token is token PUNTOCOMA ()
+Shifting token PUNTOCOMA ()
+Entering state 52
+Reducing stack by rule 20 (line 146):
+   $1 = token PRINT ()
+   $2 = nterm print_list ()
+   $3 = token PUNTOCOMA ()
+-> $$ = nterm statement ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65 22 42
+Entering state 24
+Reducing stack by rule 13 (line 74):
+   $1 = nterm statement_list ()
+   $2 = nterm statement ()
+-> $$ = nterm statement_list ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65 22
+Entering state 42
+Reading a token: Next token is token ID ()
+Shifting token ID ()
+Entering state 17
+Reading a token: Next token is token IGUAL ()
+Shifting token IGUAL ()
+Entering state 29
+Reading a token: Next token is token ID ()
+Shifting token ID ()
+Entering state 32
+Reducing stack by rule 34 (line 283):
+   $1 = token ID ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65 22 42 17 29
+Entering state 47
+Reading a token: Next token is token MENOS ()
+Shifting token MENOS ()
+Entering state 55
+Reading a token: Next token is token NUM ()
+Shifting token NUM ()
+Entering state 33
+Reducing stack by rule 35 (line 296):
+   $1 = token NUM ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65 22 42 17 29 47 55
+Entering state 69
+Reading a token: Next token is token SUMA ()
+Reducing stack by rule 29 (line 237):
+   $1 = nterm expresion ()
+   $2 = token MENOS ()
+   $3 = nterm expresion ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65 22 42 17 29
+Entering state 47
+Next token is token SUMA ()
+Shifting token SUMA ()
+Entering state 54
+Reading a token: Next token is token NUM ()
+Shifting token NUM ()
+Entering state 33
+Reducing stack by rule 35 (line 296):
+   $1 = token NUM ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65 22 42 17 29 47 54
+Entering state 68
+Reading a token: Next token is token PUNTOCOMA ()
+Reducing stack by rule 28 (line 226):
+   $1 = nterm expresion ()
+   $2 = token SUMA ()
+   $3 = nterm expresion ()
+-> $$ = nterm expresion ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65 22 42 17 29
+Entering state 47
+Next token is token PUNTOCOMA ()
+Shifting token PUNTOCOMA ()
+Entering state 63
+Reducing stack by rule 15 (line 81):
+   $1 = token ID ()
+   $2 = token IGUAL ()
+   $3 = nterm expresion ()
+   $4 = token PUNTOCOMA ()
+-> $$ = nterm statement ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65 22 42
+Entering state 24
+Reducing stack by rule 13 (line 74):
+   $1 = nterm statement_list ()
+   $2 = nterm statement ()
+-> $$ = nterm statement_list ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65 22
+Entering state 42
+Reading a token: Next token is token LLAVEDERECHA ()
+Shifting token LLAVEDERECHA ()
+Entering state 60
+Reducing stack by rule 16 (line 94):
+   $1 = token LLAVEIZQUIERDA ()
+   $2 = nterm statement_list ()
+   $3 = token LLAVEDERECHA ()
+-> $$ = nterm statement ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75 19 31 49 65
+Entering state 74
+Reducing stack by rule 19 (line 129):
+   $1 = token WHILE ()
+   $2 = token PARIZQUIERDO ()
+   $3 = nterm expresion ()
+   $4 = token PARDERECHO ()
+   $5 = nterm statement ()
+-> $$ = nterm statement ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75 18 30 48 64 73 75
+Entering state 76
+Reducing stack by rule 17 (line 98):
+   $1 = token IF ()
+   $2 = token PARIZQUIERDO ()
+   $3 = nterm expresion ()
+   $4 = token PARDERECHO ()
+   $5 = nterm statement ()
+   $6 = token ELSE ()
+   $7 = nterm statement ()
+-> $$ = nterm statement ()
+Stack now 0 3 6 7 8 9 10 11 14 18 30 48 64 73 75
+Entering state 76
+Reducing stack by rule 17 (line 98):
+   $1 = token IF ()
+   $2 = token PARIZQUIERDO ()
+   $3 = nterm expresion ()
+   $4 = token PARDERECHO ()
+   $5 = nterm statement ()
+   $6 = token ELSE ()
+   $7 = nterm statement ()
+-> $$ = nterm statement ()
+Stack now 0 3 6 7 8 9 10 11 14
+Entering state 24
+Reducing stack by rule 13 (line 74):
+   $1 = nterm statement_list ()
+   $2 = nterm statement ()
+-> $$ = nterm statement_list ()
+Stack now 0 3 6 7 8 9 10 11
+Entering state 14
+Reading a token: Next token is token PRINT ()
+Shifting token PRINT ()
+Entering state 20
+Reading a token: Next token is token CADENA ()
+Shifting token CADENA ()
+Entering state 34
+Reducing stack by rule 25 (line 181):
+   $1 = token CADENA ()
+-> $$ = nterm print_item ()
+Stack now 0 3 6 7 8 9 10 11 14 20
+Entering state 38
+Reducing stack by rule 22 (line 158):
+   $1 = nterm print_item ()
+-> $$ = nterm print_list ()
+Stack now 0 3 6 7 8 9 10 11 14 20
+Entering state 37
+Reading a token: Next token is token PUNTOCOMA ()
+Shifting token PUNTOCOMA ()
+Entering state 52
+Reducing stack by rule 20 (line 146):
+   $1 = token PRINT ()
+   $2 = nterm print_list ()
+   $3 = token PUNTOCOMA ()
+-> $$ = nterm statement ()
+Stack now 0 3 6 7 8 9 10 11 14
+Entering state 24
+Reducing stack by rule 13 (line 74):
+   $1 = nterm statement_list ()
+   $2 = nterm statement ()
+-> $$ = nterm statement_list ()
+Stack now 0 3 6 7 8 9 10 11
+Entering state 14
+Reading a token: Next token is token LLAVEDERECHA ()
+Shifting token LLAVEDERECHA ()
+Entering state 23
+Reducing stack by rule 2 (line 33):
+   $1 = nterm @1 ()
+   $2 = token FUNC ()
+   $3 = token ID ()
+   $4 = token PARIZQUIERDO ()
+   $5 = token PARDERECHO ()
+   $6 = token LLAVEIZQUIERDA ()
+   $7 = nterm declarations ()
+   $8 = nterm statement_list ()
+   $9 = token LLAVEDERECHA ()
+-> $$ = nterm program ()
+Stack now 0
+Entering state 2
+Reading a token: Now at end of input.
+Stack now 0 2
+Cleanup: popping nterm program ()
